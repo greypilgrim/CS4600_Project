@@ -112,7 +112,7 @@ ul li {
     justify-content: center;
     gap: 15px;
     margin-top: 20px;
-    max-width: 100%; 
+    width: 100%; /* Use full width */
     box-sizing: border-box;
 }
 
@@ -126,8 +126,9 @@ ul li {
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     text-align: center;
-    overflow: hidden;
+    overflow: hidden; /* Ensure content stays within bounds */
     margin-bottom: 15px;
+    box-sizing: border-box; /* Include padding in width calculation */
 }
 
 .demo-section h2 {
@@ -169,15 +170,22 @@ ul li {
 pre.encrypted-data-display, pre.keys-display {
     max-width: 100%;
     font-size: 12px; 
-    white-space: pre-wrap !important; 
-    word-break: break-all; 
-    overflow-wrap: break-word; 
+    white-space: pre-wrap !important; /* Force line wrapping */
+    word-break: break-all; /* Force breaking of long words */
+    overflow-wrap: break-word; /* Additional line wrapping */
     padding: 10px;
     background-color: #f5f5f5;
     border: 1px solid #ddd;
     border-radius: 4px;
     line-height: 1.2;
-    overflow-x: hidden !important;
+    overflow-x: hidden !important; /* Prevent horizontal scrolling */
+    max-height: 250px; /* Control vertical height */
+}
+
+/* Ensure JSON formatting is readable */
+.json-content {
+    text-align: left;
+    font-family: monospace;
 }
 
 /* Summary Section */
@@ -198,4 +206,8 @@ pre.encrypted-data-display, pre.keys-display {
     font-size: 16px;
     line-height: 1.6;
     margin-bottom: 20px;
+}
+
+.summary-section .demo-section {
+    margin: 0 auto 20px auto;
 }

@@ -118,10 +118,14 @@ def demo_step(step):
             generate_keys(receiver_private_key_path, receiver_public_key_path)
 
             # Read the generated keys to display them
-            sender_private_key = open(sender_private_key_path).read()
-            sender_public_key = open(sender_public_key_path).read()
-            receiver_private_key = open(receiver_private_key_path).read()
-            receiver_public_key = open(receiver_public_key_path).read()
+            with open(sender_private_key_path) as f:
+                sender_private_key = f.read()
+            with open(sender_public_key_path) as f:
+                sender_public_key = f.read()
+            with open(receiver_private_key_path) as f:
+                receiver_private_key = f.read()
+            with open(receiver_public_key_path) as f:
+                receiver_public_key = f.read()
 
         return render_template(
             'demo_step1.html',
@@ -135,10 +139,10 @@ def demo_step(step):
         # Step 2: Sender Encrypts a Message
         if request.method == 'POST':
             message = request.form.get('message')
-            sender_public_key = os.path.join(UPLOAD_FOLDER, 'receiver_public_key.pem')
+            receiver_public_key = os.path.join(UPLOAD_FOLDER, 'receiver_public_key.pem')
             output_file = os.path.join(UPLOAD_FOLDER, 'message_package.json')
 
-            encrypt_and_send(sender_public_key, message, output_file)
+            encrypt_and_send(receiver_public_key, message, output_file)
             flash('Message encrypted and sent.')
             return redirect(url_for('demo_step', step=3))
 
@@ -147,26 +151,54 @@ def demo_step(step):
     elif step == 3:
         # Step 3: Receiver Decrypts the Message
         decrypted_message = None
+        encrypted_data = None
+        
+        # Read encrypted data if it exists
+        message_package_path = os.path.join(UPLOAD_FOLDER, 'message_package.json')
+        if os.path.exists(message_package_path):
+            with open(message_package_path) as f:
+                encrypted_data = f.read()
+                
         if request.method == 'POST':
             receiver_private_key = os.path.join(UPLOAD_FOLDER, 'receiver_private_key.pem')
-            input_file = os.path.join(UPLOAD_FOLDER, 'message_package.json')
 
             try:
-                decrypted_message = receive_and_decrypt(receiver_private_key, input_file)
+                decrypted_message = receive_and_decrypt(receiver_private_key, message_package_path)
                 flash('Message decrypted successfully!')
             except Exception as e:
                 flash(f'Error during decryption: {str(e)}')
 
-        encrypted_data = open(os.path.join(UPLOAD_FOLDER, 'message_package.json')).read() if os.path.exists(os.path.join(UPLOAD_FOLDER, 'message_package.json')) else None
-        return render_template('demo_step3.html', decrypted_message=decrypted_message, encrypted_data=encrypted_data)
+        return render_template('demo_step3.html', 
+                              decrypted_message=decrypted_message, 
+                              encrypted_data=encrypted_data)
 
     elif step == 4:
         # Step 4: Summary
-        sender_public_key = open(os.path.join(UPLOAD_FOLDER, 'sender_public_key.pem')).read() if os.path.exists(os.path.join(UPLOAD_FOLDER, 'sender_public_key.pem')) else None
-        receiver_private_key = open(os.path.join(UPLOAD_FOLDER, 'receiver_private_key.pem')).read() if os.path.exists(os.path.join(UPLOAD_FOLDER, 'receiver_private_key.pem')) else None
-        encrypted_data = open(os.path.join(UPLOAD_FOLDER, 'message_package.json')).read() if os.path.exists(os.path.join(UPLOAD_FOLDER, 'message_package.json')) else None
+        sender_public_key = None
+        receiver_private_key = None
+        encrypted_data = None
+        
+        # Read files if they exist
+        sender_public_key_path = os.path.join(UPLOAD_FOLDER, 'sender_public_key.pem')
+        receiver_private_key_path = os.path.join(UPLOAD_FOLDER, 'receiver_private_key.pem')
+        message_package_path = os.path.join(UPLOAD_FOLDER, 'message_package.json')
+        
+        if os.path.exists(sender_public_key_path):
+            with open(sender_public_key_path) as f:
+                sender_public_key = f.read()
+                
+        if os.path.exists(receiver_private_key_path):
+            with open(receiver_private_key_path) as f:
+                receiver_private_key = f.read()
+                
+        if os.path.exists(message_package_path):
+            with open(message_package_path) as f:
+                encrypted_data = f.read()
 
-        return render_template('demo_step4.html', sender_public_key=sender_public_key, receiver_private_key=receiver_private_key, encrypted_data=encrypted_data)
+        return render_template('demo_step4.html', 
+                              sender_public_key=sender_public_key, 
+                              receiver_private_key=receiver_private_key, 
+                              encrypted_data=encrypted_data)
 
     else:
         return redirect(url_for('demo'))
