@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Step 1: Generate Keys</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .explanation-box {
+            background-color: #e6f2ff;
+            border-left: 4px solid #0066cc;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 4px 4px 0;
+        }
+        
+        .key-generation-diagram {
+            max-width: 100%;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .technical-details {
+            font-size: 14px;
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Step 1: Generate RSA Keys</h1>
+    </header>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/demo">Restart Demo</a>
+    </nav>
+    <div class="container">
+        <div class="explanation-box">
+            <h3>What is RSA?</h3>
+            <p>RSA (Rivest-Shamir-Adleman) is an asymmetric cryptography algorithm that uses a pair of keys: a public key for encryption and a private key for decryption. Its security is based on the practical difficulty of factoring the product of two large prime numbers.</p>
+            
+            <h3>Key Generation Process</h3>
+            <p>The RSA key generation process involves these steps:</p>
+            <ol>
+                <li>Generate two large random prime numbers, p and q</li>
+                <li>Compute n = p × q (the modulus)</li>
+                <li>Compute φ(n) = (p-1) × (q-1)</li>
+                <li>Choose an integer e (public exponent) such that 1 < e < φ(n) and gcd(e, φ(n)) = 1</li>
+                <li>Compute d (private exponent) such that d × e ≡ 1 (mod φ(n))</li>
+            </ol>
+            <p>The public key consists of (n, e) and the private key consists of (n, d).</p>
+            
+            <div class="technical-details">
+                <p><strong>Technical Note:</strong> In this demo, we're using 2048-bit RSA keys, which is considered secure for current standards. The public exponent (e) is typically set to 65537 (0x10001), which is a prime number that makes encryption operations efficient.</p>
+            </div>
+        </div>
+
+        <div class="demo-container">
+            <div class="demo-section">
+                <h2>Sender</h2>
+                <img src="{{ url_for('static', filename='sender-icon.svg') }}" alt="Sender Icon">
+                <p>The sender generates their RSA key pair. The <strong>private key</strong> will be kept secret and never shared. The <strong>public key</strong> will be shared with the receiver.</p>
+                <p>The sender will later use the <strong>receiver's public key</strong> to encrypt the AES key that encrypts the message.</p>
+            </div>
+            <div class="demo-section">
+                <h2>Explanation</h2>
+                <img src="{{ url_for('static', filename='keys-icon.png') }}" alt="Keys Icon">
+                <p>RSA key generation creates mathematically linked public and private keys. The security relies on the computational difficulty of deriving the private key from the public key.</p>
+                <p>Each key pair is unique and independently generated - the sender's keys and receiver's keys have no mathematical relationship to each other.</p>
+            </div>            
+            <div class="demo-section">
+                <h2>Receiver</h2>
+                <img src="{{ url_for('static', filename='receiver-icon.svg') }}" alt="Receiver Icon">
+                <p>The receiver also generates their RSA key pair. Similarly, the <strong>private key</strong> remains secret while the <strong>public key</strong> is shared with the sender.</p>
+                <p>The receiver will later use their <strong>private key</strong> to decrypt the AES key needed to decrypt the message.</p>
+            </div>            
+        </div>
+
+        <form method="POST" style="text-align: center; margin-top: 20px;">
+            <button type="submit">Generate Keys</button>
+        </form>
+
+        {% if sender_private_key and sender_public_key and receiver_private_key and receiver_public_key %}
+            <div class="explanation-box">
+                <h3>Understanding the Generated Keys</h3>
+                <p>The keys below are in PEM format (Privacy-Enhanced Mail), a base64 encoded DER certificate with header and footer lines. The keys contain:</p>
+                <ul>
+                    <li><strong>Public key:</strong> Contains the modulus (n) and public exponent (e)</li>
+                    <li><strong>Private key:</strong> Contains the modulus (n), public exponent (e), private exponent (d), prime factors (p and q), and additional values for efficient decryption</li>
+                </ul>
+            </div>
+            
+            <div class="keys-display" style="margin-top: 20px;">
+                <div class="demo-container">
+                    <div class="demo-section">
+                        <h3>Sender Private Key:</h3>
+                        <pre>{{ sender_private_key }}</pre>
+                        <div class="technical-details">
+                            <strong>Never share this key!</strong> It's used to decrypt messages intended for the sender.
+                        </div>
+                        <h3>Sender Public Key:</h3>
+                        <pre>{{ sender_public_key }}</pre>
+                        <div class="technical-details">
+                            This key can be safely shared and is used to encrypt messages to the sender.
+                        </div>
+                    </div>
+                    <div class="demo-section">
+                        <h3>Receiver Private Key:</h3>
+                        <pre>{{ receiver_private_key }}</pre>
+                        <div class="technical-details">
+                            <strong>Never share this key!</strong> It will be used to decrypt the AES key sent by the sender.
+                        </div>
+                        <h3>Receiver Public Key:</h3>
+                        <pre>{{ receiver_public_key }}</pre>
+                        <div class="technical-details">
+                            This key is shared with the sender. The sender will use this to encrypt the AES key.
+                        </div>
+                    </div>
+                </div>
+                <div style="text-align: center; margin-top: 20px;">
+                    <a href="{{ url_for('demo_step', step=2) }}">
+                        <button type="button">Next: Encrypt Message</button>
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+    <footer>
+        <p>&copy; 2025 Secure Encryption App</p>
+    </footer>
+</body>
+</html>

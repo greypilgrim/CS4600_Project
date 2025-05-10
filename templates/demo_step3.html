@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Step 3: Decrypt Message</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .explanation-box {
+            background-color: #e6f2ff;
+            border-left: 4px solid #0066cc;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 4px 4px 0;
+        }
+        
+        .decryption-flow {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px 0;
+        }
+        
+        .json-explained {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+        
+        .json-explained dt {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        
+        .json-explained dd {
+            margin-left: 20px;
+            margin-bottom: 10px;
+        }
+        
+        .technical-details {
+            font-size: 14px;
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Step 3: Receiver Decrypts the Message</h1>
+    </header>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/demo">Restart Demo</a>
+    </nav>
+    <div class="container">
+        <div class="explanation-box">
+            <h3>The Decryption Process</h3>
+            <p>At this stage, the receiver has received an encrypted package containing the ciphertext, encrypted AES key, IV, and HMAC.</p>
+            
+            <h4>Step-by-Step Decryption:</h4>
+            <ol>
+                <li><strong>Extract components:</strong> Parse the JSON to extract the encrypted AES key, IV, ciphertext, and HMAC</li>
+                <li><strong>Decrypt AES key:</strong> Use the receiver's RSA private key to decrypt the AES key</li>
+                <li><strong>Verify integrity:</strong> Compute HMAC over the IV and ciphertext, verify it matches the received HMAC</li>
+                <li><strong>Decrypt message:</strong> Use the decrypted AES key and IV to decrypt the ciphertext</li>
+                <li><strong>Remove padding:</strong> Remove PKCS#7 padding from the decrypted plaintext</li>
+            </ol>
+            
+            <div class="technical-details">
+                <p><strong>Security Features:</strong></p>
+                <ul>
+                    <li><strong>Authentication before decryption:</strong> The HMAC is verified before attempting to decrypt the message</li>
+                    <li><strong>Timing attack protection:</strong> Constant-time comparison is used when verifying the HMAC</li>
+                    <li><strong>Key isolation:</strong> The AES key can only be recovered using the receiver's private key</li>
+                    <li><strong>Forward secrecy:</strong> A new AES key is generated for each message</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="demo-container">
+            <div class="demo-section">
+                <h2>Encrypted Data</h2>
+                <pre class="encrypted-data-display">{{ encrypted_data }}</pre>
+                <div class="json-explained">
+                    <p><strong>JSON Structure Explained:</strong></p>
+                    <dl>
+                        <dt>encrypted_key</dt>
+                        <dd>The AES key encrypted with the receiver's RSA public key (base64 encoded)</dd>
+                        
+                        <dt>iv</dt>
+                        <dd>Initialization Vector for AES-CBC mode (base64 encoded)</dd>
+                        
+                        <dt>ciphertext</dt>
+                        <dd>The encrypted message (base64 encoded)</dd>
+                        
+                        <dt>hmac</dt>
+                        <dd>HMAC-SHA256 of the IV + ciphertext for integrity verification (base64 encoded)</dd>
+                    </dl>
+                </div>
+            </div>
+            <div class="demo-section">
+                <h2>Decrypted Message</h2>
+                {% if decrypted_message %}
+                    <p style="font-size: 18px; font-weight: bold;">{{ decrypted_message }}</p>
+                    <div class="technical-details">
+                        <p>The message has been successfully decrypted and its integrity verified.</p>
+                        <p>The decryption process has proven:</p>
+                        <ul>
+                            <li>Only the intended recipient (with the correct private key) could decrypt it</li>
+                            <li>The message has not been tampered with during transmission</li>
+                            <li>The message content is preserved exactly as the sender created it</li>
+                        </ul>
+                    </div>
+                {% else %}
+                    <p>No message decrypted yet. Click the button below to decrypt.</p>
+                    <div class="technical-details">
+                        <p>When you click "Decrypt Message", the application will:</p>
+                        <ol>
+                            <li>Use the receiver's private key to decrypt the AES key</li>
+                            <li>Verify the HMAC to ensure message integrity</li>
+                            <li>Use the AES key and IV to decrypt the message</li>
+                        </ol>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <form method="POST" style="text-align: center; margin-top: 20px;">
+            <button type="submit">Decrypt Message</button>
+        </form>
+        
+        {% if decrypted_message %}
+            <div style="text-align: center; margin-top: 20px;">
+                <a href="{{ url_for('demo_step', step=4) }}">
+                    <button type="button">Next: Summary</button>
+                </a>
+            </div>
+        {% endif %}
+    </div>
+    <footer>
+        <p>&copy; 2025 Secure Encryption App</p>
+    </footer>
+</body>
+</html>

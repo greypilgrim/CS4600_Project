@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Secure Encryption App</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .demo-tile {
+            display: inline-block;
+            width: 250px;
+            height: 150px;
+            background-color: #0044cc;
+            color: white;
+            border-radius: 8px;
+            text-align: center;
+            margin: 20px auto;
+            text-decoration: none;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .demo-tile:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+        }
+        
+        .demo-tile-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            padding: 15px;
+        }
+        
+        .demo-tile-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+        
+        .tile-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Secure Encryption App</h1>
+    </header>
+    <nav></nav>
+    <div class="container">
+        <!-- Introduction Box -->
+        <div class="explanation-box">
+            <h3>Welcome to the Secure Encryption Demo</h3>
+            <p>This application demonstrates how modern cryptography protects sensitive information using a hybrid approach with RSA and AES encryption.</p>
+            
+            <h4>What You'll Learn</h4>
+            <ul>
+                <li><strong>Asymmetric Encryption:</strong> How RSA public/private key pairs allow secure key exchange</li>
+                <li><strong>Symmetric Encryption:</strong> How AES provides efficient encryption of message content</li>
+                <li><strong>Message Integrity:</strong> How HMAC ensures messages haven't been tampered with</li>
+                <li><strong>Hybrid Systems:</strong> How combining multiple cryptographic techniques creates robust security</li>
+            </ul>
+            
+            <div class="technical-details">
+                <p><strong>Technical Overview:</strong> This demo implements RSA-2048 for key exchange, AES-256-CBC for message encryption, and HMAC-SHA256 for message authentication.</p>
+            </div>
+        </div>
+        
+        <!-- Demo Features -->
+        <div class="demo-container">
+            <div class="demo-section">
+                <h2>Key Generation</h2>
+                <p>Generate RSA public/private key pairs for secure asymmetric encryption.</p>
+            </div>
+            <div class="demo-section">
+                <h2>Encryption</h2>
+                <p>Encrypt messages using AES with the key protected by RSA encryption.</p>
+            </div>
+            <div class="demo-section">
+                <h2>Decryption</h2>
+                <p>Decrypt messages by first recovering the AES key, then decrypting the content.</p>
+            </div>
+        </div>
+        
+        <!-- Summary Section -->
+        <div class="summary-section">
+            <h3>Ready to Explore?</h3>
+            <p>Follow our interactive step-by-step demonstration to see secure encryption in action.</p>
+            
+            <div class="tile-container">
+                <a href="/demo" class="demo-tile">
+                    <div class="demo-tile-content">
+                        <div class="demo-tile-icon">🔐</div>
+                        <h3>Start Demo</h3>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+    <footer>
+        <p>&copy; 2025 Secure Encryption App</p>
+    </footer>
+</body>
+</html>

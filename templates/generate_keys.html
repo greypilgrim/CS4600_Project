@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Generate RSA Keys</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Generate RSA Keys</h1>
+    </header>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/sender">Encrypt a Message</a>
+        <a href="/receiver">Decrypt a Message</a>
+        <a href="/demo">Step-by-Step Demo</a>
+    </nav>
+    <div class="container">
+        <h2>Generate Keys</h2>
+        <form action="/generate_keys" method="POST">
+            <button type="submit">Generate Keys</button>
+        </form>
+        {% if sender_private_key and sender_public_key and receiver_private_key and receiver_public_key %}
+            <h3>Download Keys:</h3>
+            <ul>
+                <li><a href="{{ url_for('download_file', filename=sender_private_key) }}">Download Sender Private Key</a></li>
+                <li><a href="{{ url_for('download_file', filename=sender_public_key) }}">Download Sender Public Key</a></li>
+                <li><a href="{{ url_for('download_file', filename=receiver_private_key) }}">Download Receiver Private Key</a></li>
+                <li><a href="{{ url_for('download_file', filename=receiver_public_key) }}">Download Receiver Public Key</a></li>
+            </ul>
+        {% endif %}
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="flash-message">
+                {% for message in messages %}
+                    <p>{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+        {% endwith %}
+    </div>
+    <footer>
+        <p>&copy; 2025 Secure Encryption App</p>
+    </footer>
+</body>
+</html>

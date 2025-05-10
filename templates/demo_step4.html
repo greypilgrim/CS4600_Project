@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Step 4: Summary</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .explanation-box {
+            background-color: #e6f2ff;
+            border-left: 4px solid #0066cc;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 4px 4px 0;
+        }
+        
+        .security-properties {
+            background-color: #f0fff0;
+            border-left: 4px solid #006600;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 4px 4px 0;
+        }
+        
+        .flow-diagram {
+            width: 100%;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 15px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .technical-details {
+            font-size: 14px;
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+        
+        .security-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        .security-table th, .security-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        
+        .security-table th {
+            background-color: #f2f2f2;
+        }
+        
+        .security-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Step 4: Summary of Secure Communication</h1>
+    </header>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/demo">Restart Demo</a>
+    </nav>
+    <div class="container">
+        <div class="explanation-box">
+            <h3>Complete Secure Communication Process</h3>
+            <p>We've demonstrated a comprehensive secure communication system using RSA and AES encryption. Here's a summary of the entire process:</p>
+            
+            <ol>
+                <li><strong>Key Generation</strong>: Both sender and receiver generate their RSA key pairs</li>
+                <li><strong>Key Exchange</strong>: Sender and receiver exchange their public keys through a secure channel</li>
+                <li><strong>Encryption</strong>:
+                    <ul>
+                        <li>Sender generates a random AES key and IV</li>
+                        <li>Sender encrypts the message with AES-CBC</li>
+                        <li>Sender encrypts the AES key with the receiver's RSA public key</li>
+                        <li>Sender computes an HMAC over the IV and ciphertext</li>
+                    </ul>
+                </li>
+                <li><strong>Transmission</strong>: Sender transmits the encrypted package to the receiver</li>
+                <li><strong>Decryption</strong>:
+                    <ul>
+                        <li>Receiver decrypts the AES key using their RSA private key</li>
+                        <li>Receiver verifies the HMAC to ensure message integrity</li>
+                        <li>Receiver decrypts the message using the AES key and IV</li>
+                    </ul>
+                </li>
+            </ol>
+        </div>
+        
+        <div class="security-properties">
+            <h3>Security Properties Achieved</h3>
+            <table class="security-table">
+                <tr>
+                    <th>Security Property</th>
+                    <th>How It's Achieved</th>
+                    <th>Why It's Important</th>
+                </tr>
+                <tr>
+                    <td>Confidentiality</td>
+                    <td>AES-256-CBC encryption of the message</td>
+                    <td>Ensures only the intended recipient can read the message</td>
+                </tr>
+                <tr>
+                    <td>Key Confidentiality</td>
+                    <td>RSA-OAEP encryption of the AES key</td>
+                    <td>Protects the symmetric key used for message encryption</td>
+                </tr>
+                <tr>
+                    <td>Integrity</td>
+                    <td>HMAC-SHA256 of the encrypted data</td>
+                    <td>Ensures the message hasn't been altered during transmission</td>
+                </tr>
+                <tr>
+                    <td>Authentication</td>
+                    <td>Verification of HMAC with the AES key</td>
+                    <td>Confirms the message came from the expected sender</td>
+                </tr>
+                <tr>
+                    <td>Non-replayability</td>
+                    <td>Unique AES key and IV for each message</td>
+                    <td>Prevents replay attacks where old messages are sent again</td>
+                </tr>
+            </table>
+        </div>
+        
+        <!-- Key Information Section -->
+        <h2 style="text-align: center; margin-bottom: 15px;">Cryptographic Keys Used</h2>
+        <div class="demo-container">
+            <div class="demo-section">
+                <h3>Sender's Public Key</h3>
+                <pre class="keys-display">{{ sender_public_key }}</pre>
+                <div class="technical-details">
+                    <p>This public key would be used by the receiver to encrypt messages back to the sender.</p>
+                </div>
+            </div>
+            <div class="demo-section">
+                <h3>Receiver's Private Key</h3>
+                <pre class="keys-display">{{ receiver_private_key }}</pre>
+                <div class="technical-details">
+                    <p>This private key was used by the receiver to decrypt the AES key. In a real-world scenario, this key would be carefully protected.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Encrypted Data Section -->
+        <h2 style="text-align: center; margin: 25px 0 15px 0;">Transmitted Package</h2>
+        <div class="demo-section" style="max-width: 800px; margin: 0 auto;">
+            <h3>Encrypted Data Package</h3>
+            <pre class="encrypted-data-display">{{ encrypted_data }}</pre>
+            <div class="technical-details">
+                <p>This JSON package contains all the components necessary for secure communication:</p>
+                <ul>
+                    <li>The AES key (encrypted with RSA)</li>
+                    <li>The IV for AES-CBC mode</li>
+                    <li>The encrypted message</li>
+                    <li>The HMAC for message integrity verification</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Real-world applications -->
+        <div class="explanation-box">
+            <h3>Real-World Applications</h3>
+            <p>This hybrid encryption approach is used in many secure systems:</p>
+            <ul>
+                <li><strong>TLS/HTTPS</strong>: Used for secure web browsing, combining RSA/ECDHE for key exchange with AES for data encryption</li>
+                <li><strong>PGP/GPG</strong>: Email encryption systems that use a similar hybrid approach</li>
+                <li><strong>Signal/WhatsApp</strong>: Secure messaging apps that use similar principles with additional forward secrecy properties</li>
+                <li><strong>VPNs</strong>: Virtual Private Networks use similar hybrid encryption for secure tunneling</li>
+            </ul>
+        </div>
+        
+        <!-- Summary section -->
+        <div class="summary-section" style="margin-top: 30px; padding: 20px; background-color: #f0f8ff; border-radius: 8px;">
+            <h2>Conclusion</h2>
+            <p style="font-size: 16px; line-height: 1.6; margin: 15px 0;">
+                This demonstration shows how modern cryptographic techniques combine multiple algorithms 
+                to provide comprehensive security. The hybrid approach leverages:
+            </p>
+            <ul style="text-align: left; max-width: 600px; margin: 0 auto;">
+                <li><strong>RSA's strength</strong> for secure key exchange</li>
+                <li><strong>AES's efficiency</strong> for bulk data encryption</li>
+                <li><strong>HMAC's integrity protection</strong> to prevent tampering</li>
+                <li><strong>Base64 encoding</strong> for safe transmission of binary data</li>
+            </ul>
+            <p style="margin-top: 15px;">
+                Understanding these principles helps build and use secure systems in an increasingly 
+                digital world where data protection is essential.
+            </p>
+            <div style="margin-top: 20px;">
+                <a href="/">
+                    <button type="button">Return to Home</button>
+                </a>
+            </div>
+        </div>
+    </div>
+    <footer>
+        <p>&copy; 2025 Secure Encryption App</p>
+    </footer>
+</body>
+</html>

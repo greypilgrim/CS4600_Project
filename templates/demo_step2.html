@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Step 2: Encrypt Message</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .explanation-box {
+            background-color: #e6f2ff;
+            border-left: 4px solid #0066cc;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 4px 4px 0;
+        }
+        
+        .encryption-flow {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px 0;
+        }
+        
+        .encryption-flow img {
+            max-width: 100%;
+            margin: 10px 0;
+        }
+        
+        .technical-details {
+            font-size: 14px;
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Step 2: Sender Encrypts a Message</h1>
+    </header>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/demo">Restart Demo</a>
+    </nav>
+    <div class="container">
+        <div class="explanation-box">
+            <h3>Hybrid Encryption: Combining AES and RSA</h3>
+            <p>This step uses a hybrid encryption approach, combining the strengths of both symmetric (AES) and asymmetric (RSA) encryption:</p>
+            
+            <h4>Why use both algorithms?</h4>
+            <ul>
+                <li><strong>Efficiency:</strong> AES is much faster than RSA for encrypting large messages</li>
+                <li><strong>Security:</strong> RSA is excellent for securely sharing the AES key</li>
+                <li><strong>Size limitations:</strong> RSA can only encrypt data smaller than its key size (minus padding)</li>
+            </ul>
+            
+            <h4>The Encryption Process:</h4>
+            <ol>
+                <li><strong>Generate AES key:</strong> A random 256-bit (32-byte) AES key is generated</li>
+                <li><strong>Generate IV:</strong> A random 128-bit (16-byte) Initialization Vector for AES-CBC mode</li>
+                <li><strong>Encrypt message:</strong> The message is encrypted using AES in CBC mode with the key and IV</li>
+                <li><strong>Encrypt AES key:</strong> The AES key is encrypted using the receiver's RSA public key</li>
+                <li><strong>Compute HMAC:</strong> An HMAC-SHA256 is computed over the IV and ciphertext for integrity verification</li>
+            </ol>
+            
+            <div class="technical-details">
+                <p><strong>Technical Details:</strong></p>
+                <ul>
+                    <li>AES-256-CBC provides strong confidentiality with a randomized IV for each message</li>
+                    <li>PKCS#7 padding is used to make the message length a multiple of the AES block size (16 bytes)</li>
+                    <li>RSA-OAEP (Optimal Asymmetric Encryption Padding) with SHA-256 is used for encrypting the AES key</li>
+                    <li>HMAC-SHA256 provides integrity protection and authentication of the encrypted message</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="demo-container">
+            <div class="demo-section">
+                <h2>Sender</h2>
+                <img src="{{ url_for('static', filename='sender-icon.svg') }}" alt="Sender Icon">
+                <p>The sender performs these actions:</p>
+                <ol>
+                    <li>Generates a random AES key and IV</li>
+                    <li>Encrypts the plaintext message with AES</li>
+                    <li>Encrypts the AES key with the receiver's public key</li>
+                    <li>Computes an HMAC over the encrypted message</li>
+                </ol>
+            </div>
+            <div class="demo-section">
+                <h2>Explanation</h2>
+                <img src="{{ url_for('static', filename='encryption-icon.png') }}" alt="Encryption Icon">
+                <p>The sender creates a secure digital package containing:</p>
+                <ul>
+                    <li>The encrypted message (ciphertext)</li>
+                    <li>The encrypted AES key (only the receiver can decrypt it)</li>
+                    <li>The IV needed for AES decryption</li>
+                    <li>An HMAC to verify message integrity</li>
+                </ul>
+            </div>            
+            <div class="demo-section">
+                <h2>Receiver</h2>
+                <img src="{{ url_for('static', filename='receiver-icon.svg') }}" alt="Receiver Icon">
+                <p>The receiver will receive:</p>
+                <ul>
+                    <li>The encrypted message</li>
+                    <li>The AES key (encrypted with their public key)</li>
+                    <li>The IV for AES decryption</li>
+                    <li>The HMAC for verifying message integrity</li>
+                </ul>
+            </div>            
+        </div>
+        
+        <form method="POST" style="text-align: center; margin-top: 20px;">
+            <label for="message">Enter Message to Encrypt:</label>
+            <textarea name="message" id="message" rows="5" required></textarea>
+            <div class="technical-details">
+                <p>This message will be encrypted using AES-256-CBC and the AES key will be encrypted using the receiver's public key.</p>
+            </div>
+            <button type="submit">Encrypt and Send</button>
+        </form>
+    </div>
+    <footer>
+        <p>&copy; 2025 Secure Encryption App</p>
+    </footer>
+</body>
+</html>
