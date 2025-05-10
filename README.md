@@ -36,5 +36,5 @@ The Secure Encryption App demonstrates a comprehensive encryption system that co
    ```
 2. Powershell run command(how to run the app):
   ```bash
-  python app.py
+   python app.py
   ```
