@@ -34,3 +34,7 @@ The Secure Encryption App demonstrates a comprehensive encryption system that co
    ```bash
    pip install -r requirements.txt
    ```
+2. Powershell run command(how to run the app):
+  ```bash
+  python app.py
+  ```
